@@ -1,5 +1,22 @@
+/* 
+ * NOTICE OF LICENSE
+ * 
+ * This source file is subject to the Open Software License (OSL 3.0) that is 
+ * bundled with this package in the file LICENSE.txt. It is also available 
+ * through the world-wide-web at http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to obtain it 
+ * through the world-wide-web, please send an email to magnos.software@gmail.com 
+ * so we can send you a copy immediately. If you use any of this software please
+ * notify me via our website or email, your feedback is much appreciated. 
+ * 
+ * @copyright   Copyright (c) 2011 Magnos Software (http://www.magnos.org)
+ * @license     http://opensource.org/licenses/osl-3.0.php
+ *              Open Software License (OSL 3.0)
+ */
+
 package org.magnos.prof;
 
+import java.util.Arrays;
 
 public class Profiler
 {
@@ -38,9 +55,19 @@ public class Profiler
 	public void push( StatMethod stat )
 	{
 		trace[depth].pause();
-		if (++depth == trace.length) {
-			
+		
+		if (++depth == trace.length) 
+		{
+		   int newLength = depth + (depth >> 1);
+		   
+		   trace = Arrays.copyOf( trace, newLength );
+		   
+		   for (int i = depth; i < newLength; i++) 
+		   {
+		      trace[i] = new Trace();
+		   }
 		}
+		
 		trace[depth].start( stat );
 	}
 
@@ -49,21 +76,5 @@ public class Profiler
 		trace[depth].stop();
 		trace[--depth].restart();
 	}
-	
-//	long avgTotal = s.durationTotal / s.times;
-//	long avgMethod = s.durationMethod / s.times;
-//	
-//	System.out.format( "Stat '%30s' tracked %6d times with total time %.9fs � %.9fs [%.9fs,%.9fs] and method time %.9fs � %.9fs [%.9fs,%.9fs].\n", 
-//		s.name, 
-//		s.times, 
-//		avgTotal * 0.000000001, 
-//		((avgTotal - s.minTotal) + (s.maxTotal - avgTotal)) * 0.5 * 0.000000001, 
-//		s.minTotal * 0.000000001, 
-//		s.maxTotal * 0.000000001, 
-//		avgMethod * 0.000000001,
-//		((avgMethod - s.minMethod) + (s.maxMethod - avgMethod)) * 0.5 * 0.000000001,
-//		s.minMethod * 0.000000001, 
-//		s.maxMethod * 0.000000001
-//	);
 
 }

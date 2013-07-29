@@ -3,6 +3,10 @@ TheProf
 
 A simple Java Profiler that outputs the performance of your application into CSV files.
 
+### Download
+
+* [Latest Version](http://gh.magnos.org/?r=https://github.com/ClickerMonkey/TheProf/raw/master/build/theprof.jar)
+
 ### How does it work?
 
 In a properties file, you specify the classes/packages to include/exclude from profiling. When a class is first loaded

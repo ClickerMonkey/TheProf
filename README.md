@@ -39,3 +39,8 @@ Where theprof.jar is the location of a TheProf build, and theprof.properties is 
 ### Where do the profiling statistics go?
 
 In the CWD directory of the application, a stats directory will be created which contains a CSV file for each profiled class and a CSV file that has all statistics.
+
+### TODO
+
+* Add a live statistics viewing option
+* Add a property to delay statistical measurement until a method has been called X number of times (to avoid skewing average and maximum with measurements that involve class loading and non-JIT compiled code).

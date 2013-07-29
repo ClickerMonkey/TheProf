@@ -1,0 +1,78 @@
+<project name="TheProf" default="build" basedir=".">
+
+	<property file="build.properties"/>
+
+	<property name="jar" value="${build}/${project}.jar" />
+
+	<target name="init">
+
+		<mkdir dir="${build.in}"/>
+
+	</target>
+
+	<target name="compile" depends="init">
+
+		<unzip dest="${build.in}">
+			<fileset dir="lib" />
+		</unzip>
+		
+		<javac srcdir="${build.src}" destdir="${build.in}"
+			target="1.6" source="1.6" debug="on" optimize="on" />
+
+	</target>
+
+	<target name="build" depends="compile">
+
+		<tstamp/>
+		
+		<jar jarfile="${jar}" basedir="${build.in}" compress="true">
+			<fileset dir="." includes="theprof.xml" />
+			<fileset dir="." includes="LICENSE.txt" />
+			<manifest>
+				<attribute name="Product-Name" value="TheProf" />
+				<attribute name="Product-Version" value="${version}" />
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-On" value="${TODAY}" />
+				<attribute name="Premain-Class" value="${agent}" />
+				<attribute name="Can-Redefine-Classes" value="false" />
+			</manifest>
+		</jar>
+
+	</target>
+	
+	<target name="rebuild" depends="clean,build">
+	</target>
+
+    <target name="javadoc" depends="compile">
+
+        <javadoc
+			access="public"
+        	classpath="${build.in}"
+        	destdir="${doc}"
+        	nodeprecated="false"
+        	nodeprecatedlist="false"
+        	noindex="false"
+        	nonavbar="false"
+        	notree="false"
+        	source="1.6"
+        	sourcepath="${build.src}"
+        	splitindex="true"
+        	use="true" version="true" author="true"
+        	windowtitle="${title}">
+
+        	 <link href="http://download.oracle.com/javase/6/docs/api/"/>
+
+        </javadoc>
+
+    </target>
+
+	<target name="clean">
+
+		<delete dir="${build.in}"/>
+
+		<delete file="${jar}"/>
+		<delete file="${jar-src}"/>
+
+	</target>
+
+</project>

@@ -1,6 +1,8 @@
 TheProf
 =======
 
+![Stable](http://i4.photobucket.com/albums/y123/Freaklotr4/stage_stable.png)
+
 A simple Java Profiler that outputs the performance of your application into CSV files.
 
 ### Download

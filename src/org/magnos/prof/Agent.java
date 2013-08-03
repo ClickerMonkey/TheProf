@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.magnos.trie.Trie;
+import org.magnos.trie.Tries;
 
 
 public class Agent
@@ -39,7 +40,7 @@ public class Agent
          return;
       }
       
-      Trie<String, Boolean> include = Trie.forStrings( Boolean.FALSE );
+      Trie<String, Boolean> include = Tries.forInsensitiveStrings( Boolean.FALSE );
       
       Properties props = new Properties();
       FileInputStream inputStream = new FileInputStream( inputFile );

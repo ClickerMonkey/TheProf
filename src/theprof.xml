@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<theprof>
+
+	<properties>
+		<property name="mode" value="CSV" /> <!-- GUI -->
+	</properties>
+	
+	<inclusion-filters>
+		<inclusion pattern="org." />
+		<inclusion pattern="com." />
+		<inclusion pattern="net." />
+		<inclusion pattern="edu." />
+	</inclusion-filters>
+	
+	<exclusion-filters>
+		<exclusion pattern="java." />
+		<exclusion pattern="javax." />
+		<exclusion pattern="javafx." />
+		<exclusion pattern="sun." />
+		<exclusion pattern="com.sun." />
+		<exclusion pattern="com.bea." />
+		<exclusion pattern="com.weblogic." />
+		<exclusion pattern="weblogic." />
+		<exclusion pattern="com.ibm." />
+		<exclusion pattern="com.mysql." />
+		<exclusion pattern="com.oracle." />
+		<exclusion pattern="oracle." />
+		<exclusion pattern="com.microsoft." />
+		<exclusion pattern="net.sf." />
+		<exclusion pattern="org.magnos.prof." />
+	</exclusion-filters>
+	
+</theprof>

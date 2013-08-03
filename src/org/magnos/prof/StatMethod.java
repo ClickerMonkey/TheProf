@@ -18,39 +18,84 @@ package org.magnos.prof;
 
 public final class StatMethod
 {
-	
-	public long durationTotal;
-	public long minTotal = Long.MAX_VALUE;
-	public long maxTotal = Long.MIN_VALUE;
-	public long durationMethod;
-	public long minMethod = Long.MAX_VALUE;
-	public long maxMethod = Long.MIN_VALUE;
-	public long times;
 
-	public final String name;
-	public final StatClass clazz;
-	
-	public StatMethod( StatClass statClazz, String methodName )
-	{
-		clazz = statClazz;
-		name = methodName;
-		clazz.methods.add( this );
-	}
+   public long totalDuration;
+   public long totalMin;
+   public long totalMax;
+   public long methodDuration;
+   public long methodMin;
+   public long methodMax;
+   public long invocations;
 
-	public synchronized void accum( Trace trace )
-	{
-		final long total = trace.durationTotal;
-		final long method = trace.durationMethod;
+   public final String name;
+   public final StatClass clazz;
+   public final int delay;
 
-		durationTotal += total;
-		minTotal = Math.min( minTotal, total );
-		maxTotal = Math.max( maxTotal, total );
-		
-		durationMethod += method;
-		minMethod = Math.min( minMethod, method );
-		maxMethod = Math.max( maxMethod, method );
-		
-		times++;
-	}
-	
+   public StatMethod( StatClass statClazz, String methodName, int initialDelay )
+   {
+      clazz = statClazz;
+      name = methodName;
+      delay = initialDelay;
+      clazz.methods.add( this );
+      reset();
+   }
+
+   public synchronized void accum( Trace trace )
+   {
+      if (invocations >= 0)
+      {
+         final long total = trace.durationTotal;
+         final long method = trace.durationMethod;
+
+         totalDuration += total;
+         totalMin = Math.min( totalMin, total );
+         totalMax = Math.max( totalMax, total );
+
+         methodDuration += method;
+         methodMin = Math.min( methodMin, method );
+         methodMax = Math.max( methodMax, method );
+      }
+
+      invocations++;
+   }
+
+   public StatInstance getInstance()
+   {
+      final long totalDuration = this.totalDuration;
+      final long methodDuration = this.methodDuration;
+      final long invocations = this.invocations;
+
+      StatInstance s = new StatInstance();
+
+      s.method = this;
+      
+      if (invocations > 0) 
+      {
+         s.invocations = invocations;
+         s.methodAverage = methodDuration / invocations;
+         s.methodImportance = methodDuration + (s.methodAverage * delay);
+         s.methodVariance = ((s.methodAverage - methodMin) + (methodMax - s.methodAverage)) / 2;
+         s.methodMin = methodMin;
+         s.methodMax = methodMax;
+         s.totalAverage = totalDuration / invocations;
+         s.totalImportance = totalDuration + (s.totalAverage * delay);
+         s.totalVariance = ((s.totalAverage - totalMin) + (totalMax - s.totalAverage)) / 2;
+         s.totalMin = totalMin;
+         s.totalMax = totalMax;
+      }
+
+      return s;
+   }
+
+   public void reset()
+   {
+      totalDuration = 0;
+      totalMin = Long.MAX_VALUE;
+      totalMax = Long.MIN_VALUE;
+      methodDuration = 0;
+      methodMin = Long.MAX_VALUE;
+      methodMax = Long.MIN_VALUE;
+      invocations = -delay;
+   }
+
 }

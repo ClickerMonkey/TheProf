@@ -18,61 +18,64 @@ package org.magnos.prof;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.instrument.Instrumentation;
-import java.util.Map.Entry;
-import java.util.Properties;
-
-import org.magnos.trie.Trie;
-import org.magnos.trie.Tries;
 
 
 public class Agent
 {
 
+   public static final String DEFAULT_CONFIGURATION_FILE = "theprof.xml";
+
    public static void premain( String agentArgs, Instrumentation inst ) throws Exception
    {
-      File inputFile = new File( agentArgs );
-      
-      if ( !inputFile.exists() )
+      InputStream input = findConfiguration( agentArgs );
+
+      if (input == null)
       {
-         Logger.log( "'%s' is not a valid profiler configuration", agentArgs );
-         
-         return;
+         throw new IOException( "The specified configuration was not found on the file-system in the current-working-directory, inside any JAR loaded by this class-path, or inside the TheProf JAR." );
       }
-      
-      Trie<String, Boolean> include = Tries.forInsensitiveStrings( Boolean.FALSE );
-      
-      Properties props = new Properties();
-      FileInputStream inputStream = new FileInputStream( inputFile );
-      
-      try
-      {
-         props.load( inputStream );
-         
-         for (Entry<Object, Object> e : props.entrySet())
-         {
-            String query = e.getKey().toString();
-            Boolean included = Boolean.valueOf( e.getValue().toString() );
-            
-            include.put( query, included );
-         }
-      }
-      finally
-      {
-         inputStream.close();
-      }
+
+      Configuration config = XmlUtility.loadConfiguration( input );
 
       Logger.log( "adding shutdown hook and agent..." );
 
       try
       {
-         Runtime.getRuntime().addShutdownHook( Transformer.get( inst, include ) );
-
-         Logger.log( "success adding agent and hook" );
+         Transformer transformer = new Transformer( config ); 
+         
+         inst.addTransformer( transformer );
+         
+         if (config.mode == AgentMode.CSV)
+         {
+            Runtime.getRuntime().addShutdownHook( new CsvWriter() );
+            
+            Logger.log( "success adding agent and hook" );
+         }
       }
       catch (Exception e)
       {
          Logger.log( "error adding agent: %s", e.getMessage() );
       }
    }
+
+   private static InputStream findConfiguration( String suggestedFile ) throws FileNotFoundException
+   {
+      if (suggestedFile == null || suggestedFile.isEmpty())
+      {
+         suggestedFile = DEFAULT_CONFIGURATION_FILE;
+      }
+
+      File file = new File( suggestedFile );
+
+      if (file.isFile())
+      {
+         return new FileInputStream( file );
+      }
+
+      return Agent.class.getClassLoader().getResourceAsStream( suggestedFile );
+   }
+
 }

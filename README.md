@@ -11,7 +11,7 @@ A simple Java Profiler that outputs the performance of your application into CSV
 
 ### How does it work?
 
-In a properties file, you specify the classes/packages/methods to include/exclude from profiling. When a class is first loaded
+In a configuration file, you specify the classes/packages/methods to include/exclude from profiling. When a class is first loaded
 and the class is marked as profilable, byte code will be injected in the methods of the class.
 
 ### What does it measure per method?
@@ -59,7 +59,7 @@ Because the JVM will wait until a method is executed X number of times before it
 You add the following VM arguments:
 > -javaagent:theprof.jar=theprof.xml
 
-Where theprof.jar is the location of a TheProf build, and theprof.properties is the location of the properties file containing the class to include or exclude.
+Where theprof.jar is the location of a TheProf build, and theprof.xml is the location of the XML configuration file.
 
 ### Where do the profiling statistics go?
 
